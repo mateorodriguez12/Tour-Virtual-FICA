@@ -5,58 +5,30 @@
     <title>Mi Tour Virtual 360</title>
     <meta name="description" content="Laboratorio de ciencias de los materiales">
 
-    <!-- Componentes de interacción y layout -->
+    <!-- A-Frame y componentes de interacción y layout -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
     <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
     <script src="https://unpkg.com/aframe-template-component@3.2.2/dist/aframe-template-component.min.js"></script>
     <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
 
-    <!-- Componente original de cambio de imagen 360 -->
+    <!-- Componente que ejecuta el cambio de textura con animación -->
     <script src="components/set-image.js"></script>
-
-    <!-- Componente para controlar qué puntos de información se muestran según la escena activa -->
-    <script>
-      AFRAME.registerComponent('escena-activa', {
-        schema: { type: 'string' },
-        init: function () {
-          var targetGrupo = this.data;
-          this.el.addEventListener('click', function () {
-            // Ocultar todos los grupos
-            var grupos = document.querySelectorAll('.grupo-info');
-            grupos.forEach(function (g) {
-              g.setAttribute('visible', false);
-              g.setAttribute('scale', '0 0 0');
-            });
-            // Mostrar solo el grupo seleccionado
-            var activo = document.querySelector(targetGrupo);
-            if (activo) {
-              activo.setAttribute('visible', true);
-              activo.setAttribute('scale', '1 1 1');
-            }
-          });
-        }
-      });
-    </script>
   </head>
   <body>
     <a-scene>
       <a-assets>
-        <!-- FOTOS 360 -->
+        <!-- TUS 3 FOTOS 360 -->
         <img id="charpy" crossorigin="anonymous" src="img/charpy.jpg">
         <img id="traccion" crossorigin="anonymous" src="img/traccion.jpg">
         <img id="compresion" crossorigin="anonymous" src="img/compresion.jpg">
 
-        <!-- MINIATURAS DEL MENÚ -->
+        <!-- TUS 3 MINIATURAS (BOTONES) -->
         <img id="charpyM" crossorigin="anonymous" src="img/charpyMinuatura.jpg">
         <img id="traccionM" crossorigin="anonymous" src="img/traccionMiniatura.jpg">
         <img id="compresionM" crossorigin="anonymous" src="img/compresionMiniatura.jpg">
 
-        <!-- MODELO 3D DE INTERROGACIÓN -->
-        <a-asset-item id="interrogacion3d" src="models/interrogacion3d.glb"></a-asset-item>
-
-        <!-- Plantilla reutilizable para los botones del menú inferior con texto -->
+        <!-- Plantilla reutilizable para cada botón del menú con texto inferior -->
         <script id="link" type="text/html">
           <a-entity class="link"
             geometry="primitive: plane; height: 1; width: 1"
@@ -78,7 +50,7 @@
         </script>
       </a-assets>
 
-      <!-- FONDO 360 INICIAL -->
+      <!-- FONDO 360 INICIAL (empieza en la foto 1) -->
       <a-sky id="image-360" radius="10" src="#charpy"></a-sky>
 
       <!-- TÍTULO DEL RECORRIDO -->
@@ -89,116 +61,13 @@
               id="img-text"
               value="Laboratorio de Ciencias de los Materiales"></a-text>
       
-      <!-- MENÚ DE 3 BOTONES -->
+      <!-- MENÚ DE 3 BOTONES CON SUS RESPECTIVOS TÍTULOS -->
       <a-entity id="links" layout="type: line; margin: 1.5" position="-1.5 0 -4">
-        <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" escena-activa="#info-charpy-group"></a-entity>
-        <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" escena-activa="#info-traccion-group"></a-entity>
-        <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" escena-activa="#info-compresion-group"></a-entity>
+        <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque"></a-entity>
+        <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion"></a-entity>
+        <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion"></a-entity>
       </a-entity>
-
-
-      <!-- ============================================================== -->
-      <!-- PUNTOS DE INFORMACIÓN (HOTSPOTS) POR ZONA                      -->
-      <!-- ============================================================== -->
-
-      <!-- 1. ZONA CHARPY (Visible al inicio) -->
-      <a-entity id="info-charpy-group" class="grupo-info" visible="true" scale="1 1 1">
-        <!-- Hotspot 1: Péndulo de Charpy -->
-        <a-entity position="2.6 -0.6 -0.8">
-          <!-- Modelo 3D rotando en su eje Y desde 90 -90 -90 -->
-          <a-gltf-model 
-            class="link" 
-            src="#interrogacion3d" 
-            scale="0.2 0.2 0.2"
-            rotation="90 -90 -90"
-            animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"
-            event-set__show="_event: mouseenter; _target: #card-charpy; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-charpy; visible: false">
-          </a-gltf-model>
-          
-          <!-- Cartel explicativo -->
-          <a-entity id="card-charpy" position="0 0.8 0" visible="false" look-at="[camera]">
-            <a-plane width="2.6" height="1.1" color="#111111" material="opacity: 0.85; transparent: true"></a-plane>
-            <a-text value="Pendulo Charpy" align="center" position="0 0.3 0.02" width="2.8" color="#00D2FF"></a-text>
-            <a-text value="Determina la tenacidad y energia absorbida por impacto." align="center" position="0 -0.1 0.02" width="2.4" color="#FFFFFF" wrap-count="28"></a-text>
-          </a-entity>
-        </a-entity>
-      </a-entity>
-
-
-      <!-- 2. ZONA TRACCIÓN (Inicialmente oculta) -->
-      <a-entity id="info-traccion-group" class="grupo-info" visible="false" scale="0 0 0">
-        <!-- Hotspot 1: Máquina Universal de Tracción -->
-        <a-entity position="-2.7 1.5 -0.3">
-          <!-- Modelo 3D rotando en su eje Y desde 90 -90 -90 -->
-          <a-gltf-model 
-            class="link" 
-            src="#interrogacion3d" 
-            scale="0.4 0.4 0.4"
-            rotation="90 -90 -90"
-            animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"
-            event-set__show="_event: mouseenter; _target: #card-traccion; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-traccion; visible: false">
-          </a-gltf-model>
-          
-          <!-- Cartel explicativo -->
-          <a-entity id="card-traccion" position="0 0.8 0" visible="false" look-at="[camera]">
-            <a-plane width="2.6" height="1.1" color="#111111" material="opacity: 0.85; transparent: true"></a-plane>
-            <a-text value="Maquina Universal" align="center" position="0 0.3 0.02" width="2.8" color="#00D2FF"></a-text>
-            <a-text value="Mide limite elastico, resistencia a la traccion y alargamiento." align="center" position="0 -0.1 0.02" width="2.4" color="#FFFFFF" wrap-count="28"></a-text>
-          </a-entity>
-        </a-entity>
-      </a-entity>
-
-
-      <!-- 3. ZONA COMPRESIÓN (Inicialmente oculta, contiene 2 hotspots) -->
-      <a-entity id="info-compresion-group" class="grupo-info" visible="false" scale="0 0 0">
-        
-        <!-- Hotspot 1: Prensa de compresión -->
-        <a-entity position="2.5 0.5 -3"> 
-          <!-- Modelo 3D rotando en su eje Y desde 90 -90 -90 -->
-          <a-gltf-model 
-            class="link" 
-            src="#interrogacion3d" 
-            scale="0.4 0.4 0.4"
-            rotation="90 -90 -90"
-            animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"
-            event-set__show="_event: mouseenter; _target: #card-comp1; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-comp1; visible: false">
-          </a-gltf-model>
-          
-          <!-- Cartel explicativo -->
-          <a-entity id="card-comp1" position="0 0.8 0" visible="false" look-at="[camera]">
-            <a-plane width="2.6" height="1.1" color="#111111" material="opacity: 0.85; transparent: true"></a-plane>
-            <a-text value="Prensa de Compresion" align="center" position="0 0.3 0.02" width="2.8" color="#00D2FF"></a-text>
-            <a-text value="Aplica cargas axiales para evaluar resistencia al aplastamiento." align="center" position="0 -0.1 0.02" width="2.4" color="#FFFFFF" wrap-count="28"></a-text>
-          </a-entity>
-        </a-entity>
-
-        <!-- Hotspot 2: Área de control / Probetas de compresión -->
-        <a-entity position="-2.5 0.5 -3">
-          <!-- Modelo 3D rotando en su eje Y desde 90 -90 -90 -->
-          <a-gltf-model 
-            class="link" 
-            src="#interrogacion3d" 
-            scale="0.4 0.4 0.4"
-            rotation="90 -90 -90"
-            animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"
-            event-set__show="_event: mouseenter; _target: #card-comp2; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-comp2; visible: false">
-          </a-gltf-model>
-          
-          <!-- Cartel explicativo -->
-          <a-entity id="card-comp2" position="0 0.8 0" visible="false" look-at="[camera]">
-            <a-plane width="2.6" height="1.1" color="#111111" material="opacity: 0.85; transparent: true"></a-plane>
-            <a-text value="Banco de Probetas" align="center" position="0 0.3 0.02" width="2.8" color="#00D2FF"></a-text>
-            <a-text value="Muestras preparadas bajo normas para ensayos destructivos." align="center" position="0 -0.1 0.02" width="2.4" color="#FFFFFF" wrap-count="28"></a-text>
-          </a-entity>
-        </a-entity>
-
-      </a-entity>
-
-
+      
       <!-- CÁMARA CON CURSOR INTERACTIVO -->
       <a-entity camera look-controls>
         <a-cursor id="cursor"
@@ -207,9 +76,16 @@
           event-set__1="_event: mouseenter; color: springgreen"
           event-set__2="_event: mouseleave; color: black"
           fuse="true"
-          raycaster="objects: .link">
+          raycaster="objects: .link; far: 15">
         </a-cursor>
       </a-entity>
+
+      <!-- PUNTERO LÁSER PARA MANDOS (Meta Quest y otros visores con controles) -->
+      <!-- laser-controls detecta automáticamente el tipo de mando conectado -->
+      <!-- y dispara los mismos eventos (mouseenter, mouseleave, click) que ya -->
+      <!-- usa la plantilla del menú, así que funciona sin tocar nada más. -->
+      <a-entity laser-controls="hand: left" raycaster="objects: .link; far: 15"></a-entity>
+      <a-entity laser-controls="hand: right" raycaster="objects: .link; far: 15"></a-entity>
       
     </a-scene>
   </body>
