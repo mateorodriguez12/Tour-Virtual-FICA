@@ -48,10 +48,15 @@
       });
     </script>
 
-    <!-- Componente para manejar los audios de ambiente de cada sala -->
+    <!-- Componente unificado de audios de fondo -->
     <script>
-      // Lista unificada de todos los audios de sala para poder pausarlos
-      const roomAudios = ['audio-bienvenidaEntrada', 'audio-bienvenida', 'audio-bienvenidaCIEM', 'audio-cxn1', 'audio-tesis', 'audio-delta', 'audio-impresoras', 'audio-brazoABB'];
+      // Ahora incluimos TODOS los audios (incluyendo los del CIEM)
+      const roomAudios = [
+        'audio-bienvenidaEntrada', 'audio-bienvenida', 'audio-bienvenidaCIEM', 
+        'audio-cxn1', 'audio-tesis', 'audio-delta', 'audio-impresoras', 'audio-brazoABB',
+        'audio-charpy', 'audio-traccion', 'audio-compresion', 'audio-tesisCinta'
+      ];
+      
       function playRoomAudio(audioId) {
         roomAudios.forEach(function(id) {
           var audio = document.getElementById(id);
@@ -71,7 +76,7 @@
       }
     </script>
 
-    <!-- Componente unificado para cambiar la escena al clickear una flecha, icono o menú -->
+    <!-- Componente de navegación con flechas y menú -->
     <script>
       AFRAME.registerComponent('nav-flecha', {
         schema: {
@@ -84,18 +89,16 @@
           var el = this.el;
 
           el.addEventListener('click', function () {
-            // Reproducir sonido de transición
+            // Reproducir el sonido de transición al hacer clic
             var transitionSound = document.getElementById('Efecto_transicion');
             if (transitionSound) {
                 transitionSound.currentTime = 0;
                 transitionSound.play();
             }
 
-            // Pausar videos si los hay
             var videos = document.querySelectorAll('video');
             videos.forEach(function(vid) { vid.pause(); });
 
-            // Cambiar entorno
             var sky = document.getElementById('image-360');
             sky.setAttribute('src', data.targetImg);
             sky.setAttribute('visible', 'true');
@@ -106,14 +109,12 @@
             var pantallas2d = document.querySelectorAll('a-video');
             pantallas2d.forEach(function(pantalla){ pantalla.setAttribute('visible', 'false'); });
 
-            // Ocultar todos los grupos
             var grupos = document.querySelectorAll('.grupo-info');
             grupos.forEach(function (g) {
               g.setAttribute('visible', false);
               g.setAttribute('scale', '0 0 0');
             });
 
-            // Mostrar el nuevo grupo
             if(data.targetGroup){
                 var nuevoGrupo = document.querySelector(data.targetGroup);
                 if (nuevoGrupo) {
@@ -122,31 +123,13 @@
                 }
             }
 
-            // Reproducir el audio correspondiente a la nueva sala
             playRoomAudio(data.roomAudio);
           });
         }
       });
     </script>
 
-    <!-- Componente para detener los audios al salir de los Hitbox en CIEM -->
-    <script>
-      AFRAME.registerComponent('detener-audio', { 
-        init: function () { 
-          this.el.addEventListener('mouseleave', () => { 
-            for (let nombreComponente in this.el.components) {
-              if (nombreComponente.startsWith('sound')) {
-                if (nombreComponente !== 'sound__abrir' && nombreComponente !== 'sound__cerrar') {
-                  this.el.components[nombreComponente].stopSound();
-                }
-              }
-            }
-          });
-        }
-      });
-    </script>
-
-    <!-- Componente para reproducir video 360 y volver al terminar (LABME) -->
+    <!-- Componente para reproducir video 360 -->
     <script>
       AFRAME.registerComponent('play-video-360', {
         schema: {
@@ -198,7 +181,7 @@
       });
     </script>
 
-    <!-- Componente para reproducir un video 2D (normal) (LABME) -->
+    <!-- Componente para reproducir un video 2D -->
     <script>
       AFRAME.registerComponent('popup-2d-video', {
         schema: {
@@ -236,31 +219,6 @@
       });
     </script>
     
-    <!-- Componente para sonidos de info -->
-    <script>
-        AFRAME.registerComponent('sound-info', {
-            init: function () {
-                var el = this.el;
-                
-                el.addEventListener('mouseenter', function () {
-                    var sound = document.getElementById('open_info');
-                    if (sound) {
-                        sound.currentTime = 0;
-                        sound.play();
-                    }
-                });
-
-                el.addEventListener('mouseleave', function () {
-                    var sound = document.getElementById('close_info');
-                    if (sound) {
-                        sound.currentTime = 0;
-                        sound.play();
-                    }
-                });
-            }
-        });
-    </script>
-
     <!-- Función de arranque -->
     <script>
       function startTour() {
@@ -270,7 +228,6 @@
     </script>
   </head>
   <body>
-    <!-- Pantalla de inicio -->
     <div id="start-screen">
       <h1>Tours Virtuales FICA</h1>
       <p>Asegúrate de tener el volumen encendido.</p>
@@ -281,8 +238,8 @@
       <a-assets>
         <!-- FOTOS 360 ENTRADA -->
         <img id="entradaFICA" crossorigin="anonymous" src="img/entradaFICA.jpg">
-        <img id="imgCIEM" crossorigin="anonymous" src="img/CIEM.jpg"> <!-- Puede ser png -->
-        <img id="imgLABME" crossorigin="anonymous" src="img/LABME.jpeg"> <!-- Puede ser png -->
+        <img id="imgCIEM" crossorigin="anonymous" src="img/CIEM.jpg">
+        <img id="imgLABME" crossorigin="anonymous" src="img/LABME.jpeg">
 
         <!-- FOTOS 360 CIEM -->
         <img id="charpy" crossorigin="anonymous" src="img/charpy.jpg">
@@ -311,7 +268,7 @@
         <a-asset-item id="video" src="models/video.glb"></a-asset-item>
         <a-asset-item id="lupa" src="models/lupa.glb"></a-asset-item>
 
-        <!-- VIDEOS 360 y NORMALES (LABME) -->
+        <!-- VIDEOS 360 y NORMALES -->
         <video id="videoImpresora" crossorigin="anonymous" src="videos/videoImpresora.mp4" playsinline webkit-playsinline></video>
         <video id="videoCintax2" crossorigin="anonymous" src="videos/videoCintax2.mp4" playsinline webkit-playsinline></video>
 
@@ -319,8 +276,6 @@
         <audio id="Efecto_transicion" src="sound/Efecto_transicion.mp3" preload="auto"></audio>
         <audio id="open_info" src="sound/open_info.mp3" preload="auto"></audio>
         <audio id="close_info" src="sound/close_info.mp3" preload="auto"></audio>
-
-
 
         <!-- AUDIOS ENTRADA -->
         <audio id="audio-bienvenidaEntrada" src="audio/bienvenidaFICA.m4a" preload="auto"></audio>
@@ -340,7 +295,7 @@
         <audio id="audio-impresoras" src="audio/impresoras.mp3" preload="auto"></audio>
         <audio id="audio-brazoABB" src="audio/brazoABB.mp3" preload="auto"></audio>
 
-        <!-- Plantilla reutilizable para los botones del menú inferior CIEM -->
+        <!-- Plantilla corregida para botones del menú inferior CIEM (Ahora incluye roomAudio) -->
         <script id="link" type="text/html">
           <a-entity class="link"
             geometry="primitive: plane; height: 1; width: 1"
@@ -349,14 +304,12 @@
             event-set__2="_event: mouseup; scale: 1.2 1.2 1"
             event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
             event-set__4="_event: mouseleave; scale: 1 1 1"
-            nav-flecha="targetImg: ${src}; targetGroup: ${targetgroup}; roomAudio: ''">
+            nav-flecha="targetImg: ${src}; targetGroup: ${targetgroup}; roomAudio: ${roomaudio}">
             <a-text value="${title}" align="center" position="0 -0.75 0.05" width="2.8" color="#FFFFFF"></a-text>
           </a-entity>
         </script>
       </a-assets>
 
-      <!-- ENTORNO DUAL: Usamos un a-sky para fotos y un a-videosphere para videos -->
-      <!-- Inicia en entradaFICA -->
       <a-sky id="image-360" radius="10" src="#entradaFICA" visible="true"></a-sky>
       <a-videosphere id="video-360" radius="10" visible="false"></a-videosphere>
 
@@ -366,14 +319,12 @@
       <a-entity id="grupo-entrada" class="grupo-info" visible="true" scale="1 1 1">
         <a-text value="Seleccione el Laboratorio a visitar" align="center" position="0 2 -4" width="6" color="white"></a-text>
 
-        <!-- Botón CIEM -->
         <a-entity position="-2 0.5 -4" look-at-y>
            <a-image src="#imgCIEM" width="2" height="2" class="link" nav-flecha="targetImg: #charpy; targetGroup: #info-charpy-group; roomAudio: audio-bienvenidaCIEM"
                     event-set__enter="_event: mouseenter; scale: 1.1 1.1 1.1" event-set__leave="_event: mouseleave; scale: 1 1 1"></a-image>
            <a-text value="Ingresar a CIEM" align="center" position="0 -1.2 0" width="4" color="white"></a-text>
         </a-entity>
 
-        <!-- Botón LABME -->
         <a-entity position="2 0.5 -4" look-at-y>
            <a-image src="#imgLABME" width="2" height="2" class="link" nav-flecha="targetImg: #img1; targetGroup: #grupo-sala1; roomAudio: audio-bienvenida"
                     event-set__enter="_event: mouseenter; scale: 1.1 1.1 1.1" event-set__leave="_event: mouseleave; scale: 1 1 1"></a-image>
@@ -388,14 +339,12 @@
 
       <!-- 1. ZONA CHARPY (CIEM) -->
       <a-entity id="info-charpy-group" class="grupo-info" visible="false" scale="0 0 0">
-        <!-- MENÚ DE 3 BOTONES CIEM -->
         <a-entity id="links1" layout="type: line; margin: 1.5" position="-1.5 1.5 -4">
-          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group"></a-entity>
-          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group"></a-entity>
-          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group"></a-entity>
+          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group" data-roomaudio="audio-charpy"></a-entity>
+          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group" data-roomaudio="audio-traccion"></a-entity>
+          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group" data-roomaudio="audio-compresion"></a-entity>
         </a-entity>
 
-        <!-- Volver a Entrada -->
         <a-entity position="0 -2 6" rotation="-90 180 0" animation="property: position; to: 0 -1.7 6; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
            <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true"
                   nav-flecha="targetImg: #entradaFICA; targetGroup: #grupo-entrada; roomAudio: audio-bienvenidaEntrada"></a-box>
@@ -403,13 +352,12 @@
            <a-text value="Volver a la Entrada" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
 
-        <!-- Hotspot 1: microscopio -->
         <a-entity position="-4.5 -3.5 -3"> 
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-            event-set__show="_event: mouseenter; _target: #card-charpy1; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-charpy1; visible: false"
             sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6">
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
+            event-set__show="_event: mouseenter; _target: #card-charpy1; visible: true"
+            event-set__hide="_event: mouseleave; _target: #card-charpy1; visible: false">
           </a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
           <a-entity id="card-charpy1" position="0 0.8 0" visible="false" look-at="[camera]">
@@ -419,13 +367,12 @@
           </a-entity>
         </a-entity>
 
-        <!-- Hotspot 2: durometro -->
         <a-entity position="-8 0.5 1"> 
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.4 0.4 0.4" material="opacity: 0; transparent: true"
-            event-set__show="_event: mouseenter; _target: #card-charpy2; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-charpy2; visible: false"
             sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6">
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
+            event-set__show="_event: mouseenter; _target: #card-charpy2; visible: true"
+            event-set__hide="_event: mouseleave; _target: #card-charpy2; visible: false">
           </a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.3 0.3 0.3" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
           <a-entity id="card-charpy2" position="0 0.8 0" visible="false" look-at="[camera]">
@@ -435,17 +382,14 @@
           </a-entity>
         </a-entity>
 
-        <!-- Hotspot 3: Péndulo de Charpy -->
         <a-entity position="2.6 -0.6 -0.8">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 4.764 4.40114" material="opacity: 0.3; transparent: true"
+            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
             event-set__show="_event: mouseenter; _target: #card-charpy3; visible: true"
             event-set__hide="_event: mouseleave; _target: #card-charpy3; visible: false"
             event-set__coloron="_event: mouseenter; material.opacity: 0.3"
             event-set__coloroff="_event: mouseleave; material.opacity: 0"
-            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
-            sound__charpy="src: #audio-charpy; on: mouseenter; volume: 0.6"
-            detener-audio=""
             position="3.20032 -2.141 0.073" rotation="0 -2.22250 0">
           </a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -18.54 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear" position="2.55493 -3.6713 -0.00017"></a-gltf-model>
@@ -459,14 +403,12 @@
 
       <!-- 2. ZONA TRACCIÓN (CIEM) -->
       <a-entity id="info-traccion-group" class="grupo-info" visible="false" scale="0 0 0">
-        <!-- MENÚ DE 3 BOTONES CIEM -->
         <a-entity id="links2" layout="type: line; margin: 1.5" position="-1.5 1.5 -4">
-          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group"></a-entity>
-          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group"></a-entity>
-          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group"></a-entity>
+          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group" data-roomaudio="audio-charpy"></a-entity>
+          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group" data-roomaudio="audio-traccion"></a-entity>
+          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group" data-roomaudio="audio-compresion"></a-entity>
         </a-entity>
 
-        <!-- Volver a Entrada -->
         <a-entity position="0 -2 6" rotation="-90 180 0" animation="property: position; to: 0 -1.7 6; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
            <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true"
                   nav-flecha="targetImg: #entradaFICA; targetGroup: #grupo-entrada; roomAudio: audio-bienvenidaEntrada"></a-box>
@@ -474,17 +416,14 @@
            <a-text value="Volver a la Entrada" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
 
-        <!-- Hotspot 1: Máquina Universal de Tracción -->
         <a-entity position="-3.6 0.8 0.7">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="4.82628 5.68633 3.236" material="opacity: 0.3; transparent: true"
+            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
             event-set__show="_event: mouseenter; _target: #card-traccion; visible: true"
             event-set__hide="_event: mouseleave; _target: #card-traccion; visible: false"
             event-set__coloron="_event: mouseenter; material.opacity: 0.3"
             event-set__coloroff="_event: mouseleave; material.opacity: 0"
-            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
-            sound__traccion="src: #audio-traccion; on: mouseenter; volume: 0.6"
-            detener-audio=""
             position="-0.88067 -1.71817 2.21069" rotation="-2.06207 -53.23121 1.41405">
           </a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 78.54 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear" position="1.237 -1.99462 -0.294"></a-gltf-model>
@@ -498,14 +437,12 @@
       
       <!-- 3. ZONA COMPRESIÓN (CIEM) -->
       <a-entity id="info-compresion-group" class="grupo-info" visible="false" scale="0 0 0">
-        <!-- MENÚ DE 3 BOTONES CIEM -->
         <a-entity id="links3" layout="type: line; margin: 1.5" position="-1.5 1.5 -4">
-          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group"></a-entity>
-          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group"></a-entity>
-          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group"></a-entity>
+          <a-entity template="src: #link" data-src="#charpy" data-thumb="#charpyM" data-title="Ensayo de choque" data-targetgroup="#info-charpy-group" data-roomaudio="audio-charpy"></a-entity>
+          <a-entity template="src: #link" data-src="#traccion" data-thumb="#traccionM" data-title="Ensayo de traccion" data-targetgroup="#info-traccion-group" data-roomaudio="audio-traccion"></a-entity>
+          <a-entity template="src: #link" data-src="#compresion" data-thumb="#compresionM" data-title="Ensayo de compresion" data-targetgroup="#info-compresion-group" data-roomaudio="audio-compresion"></a-entity>
         </a-entity>
 
-        <!-- Volver a Entrada -->
         <a-entity position="0 -2 6" rotation="-90 180 0" animation="property: position; to: 0 -1.7 6; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
            <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true"
                  nav-flecha="targetImg: #entradaFICA; targetGroup: #grupo-entrada; roomAudio: audio-bienvenidaEntrada"></a-box>
@@ -513,29 +450,16 @@
            <a-text value="Volver a la Entrada" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
         
-        <!-- Hotspot 1: Prensa de compresión -->
         <a-entity position="2.5 0.5 -1"> 
-          
-          <!-- HITBOX RECTANGULAR TRANSPARENTE TIPO CHARPY/TRACCIÓN -->
-          <a-box class="link" 
-            width="1" height="1" depth="1" 
-            scale="3 4 7" 
-            position="1 -1.5 0" 
-            material="opacity: 0; transparent: true; color: #ffffff"
+          <a-box class="link" width="1" height="1" depth="1" scale="3 4 7" position="1 -1.5 0" material="opacity: 0; transparent: true; color: #ffffff"
+            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
             event-set__show="_event: mouseenter; _target: #card-comp1; visible: true"
             event-set__hide="_event: mouseleave; _target: #card-comp1; visible: false"
             event-set__coloron="_event: mouseenter; material.opacity: 0.3"
-            event-set__coloroff="_event: mouseleave; material.opacity: 0"
-            sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
-            sound__compresion="src: #audio-compresion; on: mouseenter; volume: 0.8"
-            detener-audio="">
+            event-set__coloroff="_event: mouseleave; material.opacity: 0">
           </a-box>
-
-          <!-- Modelo 3D rotando en su eje Y -->
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
-          
-          <!-- Cartel explicativo -->
           <a-entity id="card-comp1" position="0 0.8 0" visible="false" look-at="[camera]">
             <a-plane width="2.6" height="1.1" color="#111111" material="opacity: 0.85; transparent: true"></a-plane>
             <a-text value="Prensa de Compresion" align="center" position="0 0.3 0.02" width="2.8" color="#00D2FF"></a-text>
@@ -543,13 +467,12 @@
           </a-entity>
         </a-entity>
 
-        <!-- Hotspot 2: Banco de probetas -->
         <a-entity position="-2 0 4">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-            event-set__show="_event: mouseenter; _target: #card-comp2; visible: true"
-            event-set__hide="_event: mouseleave; _target: #card-comp2; visible: false"
             sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
-            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6">
+            sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
+            event-set__show="_event: mouseenter; _target: #card-comp2; visible: true"
+            event-set__hide="_event: mouseleave; _target: #card-comp2; visible: false">
           </a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
           <a-entity id="card-comp2" position="0 0.8 0" visible="false" look-at="[camera]">
@@ -567,8 +490,6 @@
 
       <!-- ================= SALA 1 (Inicio LABME) ================= -->
       <a-entity id="grupo-sala1" class="grupo-info" visible="false" scale="0 0 0">
-        
-        <!-- Volver a Entrada -->
         <a-entity position="0 -2 6" rotation="-90 180 0" animation="property: position; to: 0 -1.7 6; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
            <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true"
                   nav-flecha="targetImg: #entradaFICA; targetGroup: #grupo-entrada; roomAudio: audio-bienvenidaEntrada"></a-box>
@@ -578,9 +499,7 @@
 
         <a-entity position="1 -2 -6" rotation="-90 0 0" animation="property: position; to: 1 -1.7 -6; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
           <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true" 
-                 nav-flecha="targetImg: #img2; targetGroup: #grupo-sala2; roomAudio: audio-cxn1"
-                 event-set__enter="_event: mouseenter; scale: 0.35 0.35 0.35"
-                 event-set__leave="_event: mouseleave; scale: 0.3 0.3 0.3"></a-box>
+                 nav-flecha="targetImg: #img2; targetGroup: #grupo-sala2; roomAudio: audio-cxn1"></a-box>
           <a-gltf-model src="#flecha3d" scale="0.3 0.3 0.3"></a-gltf-model>
           <a-text value="Ir a Sala 2" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
@@ -601,7 +520,8 @@
 
         <a-entity position="-2 0 2">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info1; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info1; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -613,12 +533,11 @@
         </a-entity>
       </a-entity>
 
-
       <!-- ================= SALA 2 ================= -->
       <a-entity id="grupo-sala2" class="grupo-info" visible="false" scale="0 0 0">
         <a-entity position="-5 -1.5 3" rotation="-90 -45 0" animation="property: position; to: -5 -1.3 3; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
           <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true" 
-                 nav-flecha="targetImg: #img3; targetGroup: #grupo-sala3"></a-box>
+                 nav-flecha="targetImg: #img3; targetGroup: #grupo-sala3; roomAudio: ''"></a-box>
           <a-gltf-model src="#flecha3d" scale="0.3 0.3 0.3"></a-gltf-model>
           <a-text value="Ir a Sala 3" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
@@ -632,7 +551,8 @@
 
         <a-entity position="0 0 -2">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info2; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info2; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -656,14 +576,15 @@
 
         <a-entity position="-3.5 -1 3" animation="property: position; to: -3.5 -1.2 3; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
           <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true" 
-                 nav-flecha="targetImg: #img3_1; targetGroup: #grupo-sala3_1"></a-box>
+                 nav-flecha="targetImg: #img3_1; targetGroup: #grupo-sala3_1; roomAudio: ''"></a-box>
           <a-gltf-model src="#lupa" scale="0.3 0.3 0.3" rotation="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 4000; easing: linear"></a-gltf-model>
           <a-text value="Ver Detalle" align="center" position="0 -0.8 0" width="3" color="white" look-at-y></a-text>
         </a-entity>
 
         <a-entity position="3.5 0.5 -2">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info3G; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info3G; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -676,7 +597,8 @@
 
         <a-entity position="3 0 1.5">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info3R; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info3R; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -692,7 +614,7 @@
       <a-entity id="grupo-sala3_1" class="grupo-info" visible="false" scale="0 0 0">
         <a-entity position="0 -1.5 3" rotation="-90 0 0" animation="property: position; to: 0 -1.3 3; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
           <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true" 
-                 nav-flecha="targetImg: #img3; targetGroup: #grupo-sala3"></a-box>
+                 nav-flecha="targetImg: #img3; targetGroup: #grupo-sala3; roomAudio: ''"></a-box>
           <a-gltf-model src="#flecha3d" scale="0.3 0.3 0.3"></a-gltf-model>
           <a-text value="Volver" align="center" position="0 -0.8 0" rotation="90 0 0" width="3" color="white"></a-text>
         </a-entity>
@@ -701,7 +623,6 @@
 
       <!-- ================= SALA 5 ================= -->
       <a-entity id="grupo-sala5" class="grupo-info" visible="false" scale="0 0 0">
-        
         <a-entity position="-3 -2 3" rotation="-90 135 0" animation="property: position; to: -3 -1.7 3; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine">
           <a-box class="link" width="1.5" height="1.5" depth="0.5" scale="0.3 0.3 0.3" material="opacity: 0; transparent: true" nav-flecha="targetImg: #img1; targetGroup: #grupo-sala1; roomAudio: audio-bienvenida"></a-box>
           <a-gltf-model src="#flecha3d" scale="0.3 0.3 0.3"></a-gltf-model>
@@ -724,7 +645,8 @@
 
         <a-entity position="2 0 0">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info5; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info5; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -737,26 +659,18 @@
         
         <a-entity position="0.5 0.5 -2">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                sound-info
+                sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                 popup-2d-video="videoSrc: #videoCintax2; screenId: #pantalla-cinta; volumen: 0.5; playAudioOnStart: audio-tesisCinta"
                 event-set__show="_event: mouseenter; _target: #texto-video2; visible: true"
                 event-set__hide="_event: mouseleave; _target: #texto-video2; visible: false">
           </a-box>
-          
-          <a-gltf-model 
-            src="#video" 
-            scale="0.2 0.2 0.2" 
-            rotation="0 0 0" 
-            animation="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 4000; easing: linear">
-          </a-gltf-model>
-          
+          <a-gltf-model src="#video" scale="0.2 0.2 0.2" rotation="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 4000; easing: linear"></a-gltf-model>
           <a-entity id="texto-video2" position="0 0.8 0" visible="false" look-at-y>
             <a-plane width="3.2" height="0.6" color="#111" material="opacity: 0.85; transparent: true"></a-plane>
             <a-text value="Ver Video: Tesis Brazo Robot" align="center" position="0 0 0.02" width="3" color="#00D2FF"></a-text>
           </a-entity>
-
           <a-video id="pantalla-cinta" src="#videoCintax2" width="3.2" height="1.8" position="-2.5 0.5 -1.5" visible="false" look-at-y></a-video>
-
         </a-entity>  
       </a-entity>
 
@@ -790,7 +704,8 @@
 
         <a-entity position="-2.5 1 -1">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                 sound-info
+                 sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                 sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                  event-set__show="_event: mouseenter; _target: #card-info7; visible: true"
                  event-set__hide="_event: mouseleave; _target: #card-info7; visible: false"></a-box>
           <a-gltf-model src="#interrogacion3d" scale="0.2 0.2 0.2" rotation="90 -90 -90" animation="property: rotation; from: 90 -90 -90; to: 90 270 -90; loop: true; dur: 4000; easing: linear"></a-gltf-model>
@@ -803,7 +718,8 @@
 
         <a-entity position="-2 1.5 1">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
-                sound-info
+                sound__abrir="src: #open_info; on: mouseenter; poolSize: 3; volume: 0.6"
+                sound__cerrar="src: #close_info; on: mouseleave; poolSize: 3; volume: 0.6"
                 play-video-360="targetVideo: #videoImpresora; returnImg: #img7; returnGroup: #grupo-sala7; volumen: 0.5; returnAudio: audio-impresoras"
                 event-set__show="_event: mouseenter; _target: #texto-video1; visible: true"
                 event-set__hide="_event: mouseleave; _target: #texto-video1; visible: false">
