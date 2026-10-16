@@ -315,8 +315,8 @@
       <a-assets>
         <!-- FOTOS 360 ENTRADA -->
         <img id="entradaFICA" crossorigin="anonymous" src="img/entradaFICA.jpg">
-        <img id="imgCIEM" crossorigin="anonymous" src="img/CIEM.jpg"> <!-- Puede ser png -->
-        <img id="imgLABME" crossorigin="anonymous" src="img/LABME.jpeg"> <!-- Puede ser png -->
+        <img id="imgCIEM" crossorigin="anonymous" src="img/CIEM.jpg">
+        <img id="imgLABME" crossorigin="anonymous" src="img/LABME.jpeg">
 
         <!-- FOTOS 360 CIEM -->
         <img id="charpy" crossorigin="anonymous" src="img/charpy.jpg">
@@ -345,24 +345,25 @@
         <a-asset-item id="video" src="models/video.glb"></a-asset-item>
         <a-asset-item id="lupa" src="models/lupa.glb"></a-asset-item>
 
-        <!-- VIDEOS 360 y NORMALES (LABME) -->
+        <!-- VIDEOS 360 y NORMALES -->
+        <!-- OJO: En tu lista no mencionaste videoImpresora.mp4, pero lo dejo por si acaso -->
         <video id="videoImpresora" crossorigin="anonymous" src="videos/videoImpresora.mp4" playsinline webkit-playsinline></video>
         <video id="videoCintax2" crossorigin="anonymous" src="videos/videoCintax2.mp4" playsinline webkit-playsinline></video>
         <video id="videoCompresion" crossorigin="anonymous" src="videos/videoCompresion.mp4" playsinline webkit-playsinline></video>
         
-        <!-- EFECTOS DE SONIDO GLOBALES -->
-        <audio id="efectoTransicion" src="sound/Efecto_transicion.mp3" preload="auto"></audio>
-        <audio id="openInfo" src="sound/open_info.mp3" preload="auto"></audio>
-        <audio id="closeInfo" src="sound/close_info.mp3" preload="auto"></audio>
+        <!-- EFECTOS DE SONIDO GLOBALES (Nombres reales de GitHub) -->
+        <audio id="efectoTransicion" src="sound/efectoTransicion.mp3" preload="auto"></audio>
+        <audio id="openInfo" src="sound/openInfo.mp3" preload="auto"></audio>
+        <!-- En tu lista decía closeInfo.mp3 (con mayúscula), si es así, el src debe coincidir -->
+        <audio id="closeInfo" src="sound/closeInfo.mp3" preload="auto"></audio>
 
-        <!-- AUDIOS ENTRADA -->
+        <!-- AUDIOS ENTRADA (Corregido a .m4a que es lo que tienes en GitHub) -->
         <audio id="audio-bienvenidaEntrada" src="audio/bienvenidaFICA.m4a" preload="auto"></audio>
 
-        <!-- AUDIOS CIEM -->
+        <!-- AUDIOS CIEM (Nombres reales de GitHub) -->
         <audio id="audio-bienvenidaCIEM" src="audio/bienvenida.mp3" preload="auto"></audio>
-        <!-- Asegúrate de que la extensión (mp3 o MP3) coincida exactamente con tu repositorio -->
-        <audio id="audio-charpy" src="audio/charpy.mp3" preload="auto"></audio>
-        <audio id="audio-traccion" src="audio/traccion.mp3" preload="auto"></audio>
+        <audio id="audio-charpy" src="audio/penduloCharpy.mp3" preload="auto"></audio>
+        <audio id="audio-traccion" src="audio/ensayoTraccion.mp3" preload="auto"></audio>
         <audio id="audio-compresion" src="audio/compresion.mp3" preload="auto"></audio>
 
         <!-- AUDIOS LABME -->
