@@ -358,6 +358,12 @@
         <video id="videoCompresion" crossorigin="anonymous" src="videos/videoCompresion.mp4" playsinline webkit-playsinline preload="none"></video>
         <video id="videoDelta" crossorigin="anonymous" src="videos/videoDelta.mp4" playsinline webkit-playsinline preload="none"></video>
         <video id="videoBrazo" crossorigin="anonymous" src="videos/videoBrazo.mp4" playsinline webkit-playsinline preload="none"></video>
+=======
+        
+        <video id="videoDelta" crossorigin="anonymous" src="videos/videoDelta.mp4" playsinline webkit-playsinline preload="none"></video>
+        <video id="videoBrazo" crossorigin="anonymous" src="videos/videoBrazo.mp4" playsinline webkit-playsinline preload="none"></video>
+        
+>>>>>>> ebb0e4ce9162aa456c11c589e0edba1ac5cd58b3
         <!-- EFECTOS DE SONIDO GLOBALES -->
         <audio id="efectoTransicion" src="sound/efectoTransicion.mp3" preload="auto"></audio>
         <audio id="openInfo" src="sound/openInfo.mp3" preload="auto"></audio>
@@ -490,6 +496,24 @@
             <a-text value="Determina la tenacidad y energia absorbida por impacto." align="center" position="-0.82869 -0.1187 -0.2343" width="2.4" color="#FFFFFF" wrap-count="28"></a-text>
           </a-entity>
         </a-entity>
+        
+        <!-- VIDEO NORMAL 2D (Ensayo de Charpy) -->
+        <a-entity position="4 1.5 -1.5" rotation="0 -60 0">
+          <!-- Hitbox del icono de video -->
+          <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
+                data-audio-enter="openInfo" data-audio-leave="closeInfo"
+                popup-2d-video="videoSrc: #videoCharpy; screenId: #pantalla-charpy; volumen: 0.5; playAudioOnStart: ''"
+                event-set__show="_event: mouseenter; _target: #texto-video-charpy; visible: true"
+                event-set__hide="_event: mouseleave; _target: #texto-video-charpy; visible: false">
+          </a-box>
+          <a-gltf-model src="#video" scale="0.2 0.2 0.2" rotation="0 0 0" animation="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 4000; easing: linear"></a-gltf-model>
+          <a-entity id="texto-video-charpy" position="0 0.8 0" visible="false" look-at-y>
+            <a-plane width="3.2" height="0.6" color="#111" material="opacity: 0.85; transparent: true"></a-plane>
+            <a-text value="Ver Video: Ensayo Charpy" align="center" position="0 0 0.02" width="3" color="#00D2FF"></a-text>
+          </a-entity>
+          <a-video id="pantalla-charpy" src="#videoCharpy" width="3.2" height="1.8" position="-2 0.5 1" visible="false" look-at-y></a-video>
+        </a-entity>  
+
       </a-entity>
 
       <!-- 2. ZONA TRACCIoN (CIEM) -->
@@ -564,7 +588,7 @@
         </a-entity>
 
         <!-- Hotspot 2: Banco de probetas -->
-        <a-entity position="-2 0 4">
+        <a-entity position="-2 1 4">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
             event-set__show="_event: mouseenter; _target: #card-comp2; visible: true"
             event-set__hide="_event: mouseleave; _target: #card-comp2; visible: false"
@@ -579,7 +603,11 @@
         </a-entity>
 
         <!-- VIDEO NORMAL 2D (Ensayo de Compresion) -->
+<<<<<<< HEAD
         <a-entity position="-4 0.5 -1.5" rotation="0 45 0">
+=======
+        <a-entity position="-2 1 1.5" rotation="0 0 0">
+>>>>>>> ebb0e4ce9162aa456c11c589e0edba1ac5cd58b3
           <!-- Hitbox del icono de video -->
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
                 data-audio-enter="openInfo" data-audio-leave="closeInfo"
@@ -785,6 +813,7 @@
         <a-entity position="-3 0 -2" rotation="0 45 0">
           <a-box class="link" width="1.2" height="1.6" depth="1.2" scale="0.2 0.2 0.2" material="opacity: 0; transparent: true"
                 data-audio-enter="openInfo" data-audio-leave="closeInfo"
+<<<<<<< HEAD
                 play-video-360="targetVideo: #videoDelta; returnImg: #img5; returnGroup: #grupo-sala5; volumen: 0.5; returnAudio: audio-tesis; videoRotation: 0 110 0"
                 event-set__show="_event: mouseenter; _target: #texto-video-delta; visible: true"
                 event-set__hide="_event: mouseleave; _target: #texto-video-delta; visible: false">
